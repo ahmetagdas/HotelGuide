@@ -9,7 +9,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RaporService", "RaporServic
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Data.Entity", "Data.Entity\Data.Entity.csproj", "{4273F1AD-26CF-4EA0-899D-79693091DC4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OtelService.Tests", "OtelService.Tests\OtelService.Tests.csproj", "{04F4C300-008A-48BA-987C-E0651706CD84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OtelService.Tests", "OtelService.Tests\OtelService.Tests.csproj", "{04F4C300-008A-48BA-987C-E0651706CD84}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{C1257F8D-ECC4-45DD-9C92-137702C7B9CD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflow", "workflow", "{C18B8F27-8430-4833-882D-9B3FCF5ECCFA}"
+	ProjectSection(SolutionItems) = preProject
+		dotnet.yml = dotnet.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +43,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C18B8F27-8430-4833-882D-9B3FCF5ECCFA} = {C1257F8D-ECC4-45DD-9C92-137702C7B9CD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {CF06E348-9888-4F5B-8546-34095352DBEE}

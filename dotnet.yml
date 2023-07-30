@@ -1,0 +1,33 @@
+name: .NET CI/CD
+
+on:
+  push:
+    branches:
+      - main # Ana dalýn deðiþikliklerini izle
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '6.0.x' # .NET 6.x sürümünü kullanýn
+
+    - name: Restore NuGet packages
+      run: dotnet restore
+
+    - name: Build and run tests
+      run: dotnet test --no-restore --verbosity normal
+
+    - name: Publish to GitHub Packages
+      run: dotnet publish -c Release -o publish
+
+    - name: Deploy to Server # Burada sunucuya yayýn adýmlarýný tanýmlayabilirsiniz
+      run: |
+        # Yayýný yapacak komutlarý buraya ekleyin
+
