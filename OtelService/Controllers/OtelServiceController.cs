@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Data.Entity;
-using OtelService.Service;
 using MassTransit;
 
 namespace OtelService.Controllers
@@ -11,15 +10,12 @@ namespace OtelService.Controllers
     public class OtelController : ControllerBase
     {
         private readonly OtelDbContext _context;
-        private readonly RaporTalepService _raporTalepService;
         private readonly IPublishEndpoint _publishEndpoint;
 
         public OtelController(OtelDbContext context,
-                              IPublishEndpoint publishEndpoint,
-                              RaporTalepService raporTalepService)
+                              IPublishEndpoint publishEndpoint)
         {
             _context = context;
-            _raporTalepService = raporTalepService;
             _publishEndpoint = publishEndpoint;
         }
 
@@ -33,7 +29,7 @@ namespace OtelService.Controllers
 
         // GET: api/otel/5
         [HttpGet("{otelId}")]
-        public async Task<ActionResult<Otel>> GetOtelById(Guid otelId)
+        public async Task<ActionResult<Otel>> GetOtelById(int otelId)
         {
             var otel = await _context.Oteller.FindAsync(otelId);
 
@@ -50,7 +46,7 @@ namespace OtelService.Controllers
         public async Task<ActionResult<Otel>> CreateOtel(Otel otel)
         {
             _context.Oteller.Add(otel);
-            await _context.SaveChangesAsync();
+
 
             // Yeni rapor talebi oluştur
             var raporTalebi = new Rapor
@@ -60,6 +56,16 @@ namespace OtelService.Controllers
 
             // Rapor talebini RabbitMQ'ya gönder
             await _publishEndpoint.Publish(raporTalebi);
+
+            // Rapor oluşturulduğunda raporun durumunu veritabanına kaydedin
+            _context.Raporlar.Add(new Rapor
+            {
+                TalepEdildigiTarih = DateTime.Now,
+                Otel = otel,
+                OtelYetkilisi = null,
+                Durum = "Oluşturuldu"
+            });
+            await _context.SaveChangesAsync();
 
             return CreatedAtAction(nameof(GetOtelById), new { otelId = otel.Id }, otel);
         }
