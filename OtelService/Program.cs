@@ -1,4 +1,5 @@
 using Data.Entity;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 
@@ -24,6 +25,15 @@ builder.Services.AddDbContext<OtelDbContext>(options =>
     });
 });
 
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("rabbitmq://localhost"); // RabbitMQ baðlantý bilgileri
+    });
+});
+
+builder.Services.AddMassTransitHostedService(); // MassTransit'ý çalýþtýrýyoruz
 
 var app = builder.Build();
 
