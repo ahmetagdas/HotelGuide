@@ -8,27 +8,57 @@ on:
       - v* # Yeni bir etiket oluþturulduðunda çalýþtýr
 jobs:
   build:
+    name: Build and Test
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Setup .NET SDK
+    - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: '6.0.x' # .NET 6.x sürümünü kullanýn
+        dotnet-version: '3.x'  # Seçtiðiniz .NET sürümüne uygun bir deðer verin
 
-    - name: Restore NuGet packages
+    - name: Restore dependencies
       run: dotnet restore
 
-    - name: Build and run tests
+    - name: Build and Test
+      run: dotnet build --configuration Release --no-restore
+      env:
+        DOTNET_CLI_TELEMETRY_OPTOUT: 1  # Opsiyonel: .NET Telemetriyi devre dýþý býrakma
+
+    - name: Run tests
       run: dotnet test --no-restore --verbosity normal
+      env:
+        DOTNET_CLI_TELEMETRY_OPTOUT: 1  # Opsiyonel: .NET Telemetriyi devre dýþý býrakma
 
-    - name: Publish to GitHub Packages
-      run: dotnet publish -c Release -o publish
+  deploy:
+    name: Deploy to Production
+    needs: build
+    runs-on: ubuntu-latest
 
-    - name: Deploy to Server # Burada sunucuya yayýn adýmlarýný tanýmlayabilirsiniz
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.x'  # Seçtiðiniz .NET sürümüne uygun bir deðer verin
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build Release
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Publish
+      run: dotnet publish --configuration Release --no-build --output ./publish
+      env:
+        DOTNET_CLI_TELEMETRY_OPTOUT: 1  # Opsiyonel: .NET Telemetriyi devre dýþý býrakma
+
+    - name: Deploy to Production Server  # Burada prodüksiyon sunucuya daðýtým adýmlarýný tanýmlayýn
       run: |
-        # Yayýný yapacak komutlarý buraya ekleyin
-
+        # Burada prodüksiyon sunucuya daðýtým adýmlarýný yazýn.
+        # Örneðin, SSH veya baþka bir yöntemle sunucuya baðlanarak daðýtým yapabilirsiniz.
