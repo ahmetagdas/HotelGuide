@@ -1,0 +1,64 @@
+name: .NET CI/CD
+
+on:
+  push:
+    branches:
+      - main # Ana dalın değişikliklerini izle
+    tags:
+      - v* # Yeni bir etiket oluşturulduğunda çalıştır
+jobs:
+  build:
+    name: Build and Test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.x'  # Seçtiğiniz .NET sürümüne uygun bir değer verin
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build and Test
+      run: dotnet build --configuration Release --no-restore
+      env:
+        DOTNET_CLI_TELEMETRY_OPTOUT: 1  # Opsiyonel: .NET Telemetriyi devre dışı bırakma
+
+    - name: Run tests
+      run: dotnet test --no-restore --verbosity normal
+      env:
+        DOTNET_CLI_TELEMETRY_OPTOUT: 1  # Opsiyonel: .NET Telemetriyi devre dışı bırakma
+
+  deploy:
+    name: Deploy to Production
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '3.x'  # Seçtiğiniz .NET sürümüne uygun bir değer verin
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build Release
+      run: dotnet build --configuration Release --no-restore
+
+    - name: Publish
+      run: dotnet publish --configuration Release --no-build --output ./publish
+      env:
+        DOTNET_CLI_TELEMETRY_OPTOUT: 1  # Opsiyonel: .NET Telemetriyi devre dışı bırakma
+
+    - name: Deploy to Production Server  # Burada prodüksiyon sunucuya dağıtım adımlarını tanımlayın
+      run: |
+        # Burada prodüksiyon sunucuya dağıtım adımlarını yazın.
+        # Örneğin, SSH veya başka bir yöntemle sunucuya bağlanarak dağıtım yapabilirsiniz.
