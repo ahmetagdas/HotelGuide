@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - main # Ana dalýn deðiþikliklerini izle
-
+    tags:
+      - v* # Yeni bir etiket oluþturulduðunda çalýþtýr
 jobs:
   build:
     runs-on: ubuntu-latest
